@@ -1,51 +1,72 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from users import User
+from users.models import User
 from . import constants
 
 
 class Review(models.Model):
     """Модель отзыва."""
 
-    text = models.TextField(
-        max_length=constants.MAX_LENGTH_FOR_CHARFIELD, verbose_name="Текст отзыва"
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Название произведения',
+        related_name='reviews',
     )
     author = models.ForeignKey(
-        User, verbose_name="Автор отзыва", related_name="reviews"
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор отзыва',
+        related_name='reviews',
     )
+    text = models.TextField('Текст отзыва')
     score = models.IntegerField(
+        'Рейтинг произведения',
         validators=[
             MinValueValidator(constants.MIN_SCORE),
             MaxValueValidator(constants.MAX_SCORE),
         ],
-        verbose_name="Рейтинг произведения",
     )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name="Название произведения",
-        related_name="reviews",
+    pub_date = models.DateTimeField(
+        'Дата и время публикации отзыва', auto_now_add=True
     )
-    pub_date = models.DateTimeField(verbose_name="Дата и время публикации отзыва")
+
+    def __str__(self):
+        return self.text[:50]
 
     class Meta:
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title'], name='unique_author_title'
+            )
+        ]  # На одно произведение пользователь может оставить только один отзыв.
+        ordering = ['-pub_date']
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
 
 class Comment(models.Model):
     """Модель комментария."""
 
-    text = models.TextField(
-        max_length=constants.MAX_LENGTH_FOR_CHARFIELD, verbose_name="Текст комментария"
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, related_name='comments'
     )
     author = models.ForeignKey(
-        User, verbose_name="Автор комментария", related_name="comments"
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор комментария',
+        related_name='comments',
     )
-    review = models.ForeignKey(Review, related_name="comments")
-    pub_date = models.DateTimeField(verbose_name="Дата и время публикации комментария")
+    text = models.TextField('Текст комментария')
+    pub_date = models.DateTimeField(
+        'Дата и время публикации комментария', auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.text[:50]
 
     class Meta:
-        verbose_name = "Комментарий"
-        verbose_name_plural = "Комментарии"
+        ordering = ['pub_date']
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
