@@ -10,6 +10,7 @@ class User(AbstractUser):
     - добавлены поля bio и role
     - поле password необязательно
     """
+
     roles = ('user', 'moderator', 'admin')
     password = models.CharField(max_length=128, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
