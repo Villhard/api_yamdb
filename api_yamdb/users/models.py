@@ -3,8 +3,14 @@ from django.db import models
 
 
 class User(AbstractUser):
-    roles = ('user', 'moderator', 'admin')
+    """
+    Расширенная модель пользователя.
 
+    Изменения:
+    - добавлены поля bio и role
+    - поле password необязательно
+    """
+    roles = ('user', 'moderator', 'admin')
     password = models.CharField(max_length=128, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     role = models.CharField(
