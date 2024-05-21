@@ -8,27 +8,27 @@ class ReviewSerializer(ModelSerializer):
     """Сериализатор отзыва."""
 
     author = SlugRelatedField(
-        slug_field="username",
+        slug_field='username',
         read_only=True,
         default=CurrentUserDefault(),
     )
 
     class Meta:
         model = Review
-        fields = "__all__"
-        read_only_fields = ("id", "title", "pub_date", "author")
+        fields = '__all__'
+        read_only_fields = ('id', 'title', 'pub_date', 'author')
 
 
 class CommentSerializer(ModelSerializer):
     """Сериализатор комментария."""
 
     author = SlugRelatedField(
-        slug_field="username",
+        slug_field='username',
         read_only=True,
         default=CurrentUserDefault(),
     )
 
     class Meta:
         model = Comment
-        fields = "__all__"
-        read_only_fields = ("id", "review", "pub_date", "author")
+        fields = '__all__'
+        read_only_fields = ('id', 'review', 'pub_date', 'author')
