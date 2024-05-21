@@ -11,7 +11,11 @@ class User(AbstractUser):
     - поле password необязательно
     """
 
-    roles = ('user', 'moderator', 'admin')
+    roles = (
+        ('user', 'Пользователь'),
+        ('moderator', 'Модератор'),
+        ('admin', 'Администратор'),
+    )
     password = models.CharField(max_length=128, blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     role = models.CharField(
