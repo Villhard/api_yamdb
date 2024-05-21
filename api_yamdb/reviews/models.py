@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from users.models import User
 from . import constants
 
+
 class Category(models.Model):
     """Модель категории"""
 
@@ -52,7 +53,8 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-     
+
+
 class Review(models.Model):
     """Модель отзыва."""
 
@@ -88,7 +90,7 @@ class Review(models.Model):
             models.UniqueConstraint(
                 fields=['author', 'title'], name='unique_author_title'
             )
-        ]  # На одно произведение пользователь может оставить только один отзыв.
+        ]  # На одно произведение пользователь может оставить только один отзыв
         ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'
