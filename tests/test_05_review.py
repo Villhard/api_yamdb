@@ -14,9 +14,11 @@ from tests.utils import (
 
 @pytest.mark.django_db(transaction=True)
 class Test05ReviewAPI:
-    TITLE_DETAIL_URL_TEMPLATE = "/api/v1/titles/{title_id}/"
-    REVIEWS_URL_TEMPLATE = "/api/v1/titles/{title_id}/reviews/"
-    REVIEW_DETAIL_URL_TEMPLATE = "/api/v1/titles/{title_id}/reviews/{review_id}/"
+    TITLE_DETAIL_URL_TEMPLATE = '/api/v1/titles/{title_id}/'
+    REVIEWS_URL_TEMPLATE = '/api/v1/titles/{title_id}/reviews/'
+    REVIEW_DETAIL_URL_TEMPLATE = (
+        '/api/v1/titles/{title_id}/reviews/{review_id}/'
+    )
 
     def test_01_review_not_auth(
         self,
@@ -49,7 +51,8 @@ class Test05ReviewAPI:
         )
 
         response = client.post(
-            self.REVIEWS_URL_TEMPLATE.format(title_id=titles[0]["id"]), data=new_data
+            self.REVIEWS_URL_TEMPLATE.format(title_id=titles[0]['id']),
+            data=new_data,
         )
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             "Проверьте, что POST-запрос неавторизованного пользователя к "
@@ -79,7 +82,9 @@ class Test05ReviewAPI:
             "статусом 401."
         )
 
-    def test_02_review_post(self, admin_client, user_client, moderator_client, admin):
+    def test_02_review_post(
+        self, admin_client, user_client, moderator_client, admin
+    ):
         titles, _, _ = create_titles(admin_client)
         title_0_reviews_count = 0
         first_title_reviews_url = self.REVIEWS_URL_TEMPLATE.format(
@@ -97,13 +102,17 @@ class Test05ReviewAPI:
             "должен вернуться ответ со статусом 400."
         )
 
-        post_data = {"text": "Неочень", "score": 5}
+
+        post_data = {'text': 'Неочень', 'score': 5}
         create_single_review(
-            admin_client, titles[0]["id"], post_data["text"], post_data["score"]
+            admin_client,
+            titles[0]['id'],
+            post_data['text'],
+            post_data['score'],
         )
         title_0_reviews_count += 1
 
-        data = {"text": "Шляпа", "score": 1}
+        data = {'text': 'Шляпа', 'score': 1}
         response = admin_client.post(first_title_reviews_url, data=data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             "Проверьте, что при попытке пользователя создать второй отзыв на "
@@ -121,7 +130,10 @@ class Test05ReviewAPI:
         review = None
         try:
             review = Review.objects.create(
-                text="Текст второго отзыва", score="5", author=admin, title=title
+                text='Текст второго отзыва',
+                score='5',
+                author=admin,
+                title=title,
             )
         except IntegrityError:
             pass
@@ -187,9 +199,9 @@ class Test05ReviewAPI:
         check_pagination(first_title_reviews_url, data, title_0_reviews_count)
 
         expected_data = {
-            "text": post_data["text"],
-            "score": post_data["score"],
-            "author": admin.username,
+            'text': post_data['text'],
+            'score': post_data['score'],
+            'author': admin.username,
         }
         review = None
         for value in data["results"]:
@@ -206,12 +218,12 @@ class Test05ReviewAPI:
             self.TITLE_DETAIL_URL_TEMPLATE.format(title_id=titles[0]["id"])
         )
         data = response.json()
-        assert data.get("rating") == 4, (
-            "Проверьте, что произведениям присваивается рейтинг, "
-            "равный средной оценке оставленных отзывов. "
-            "Поле `rating` не найдено в ответе на GET-запрос к "
-            f"`{self.TITLE_DETAIL_URL_TEMPLATE}` или содержит некорректное "
-            "значение."
+        assert data.get('rating') == 4, (
+            'Проверьте, что произведениям присваивается рейтинг, '
+            'равный средной оценке оставленных отзывов. '
+            'Поле `rating` не найдено в ответе на GET-запрос к '
+            f'`{self.TITLE_DETAIL_URL_TEMPLATE}` или содержит некорректное '
+            'значение.'
         )
 
     def test_03_review_detail_get(
@@ -249,7 +261,7 @@ class Test05ReviewAPI:
 
         expected_data = {key: value for key, value in reviews[0].items() if key != "id"}
         check_fields(
-            "review",
+            'review',
             self.REVIEW_DETAIL_URL_TEMPLATE,
             review,
             expected_data,
@@ -257,7 +269,13 @@ class Test05ReviewAPI:
         )
 
     def test_04_review_detail_user(
-        self, admin_client, admin, user, user_client, moderator, moderator_client
+        self,
+        admin_client,
+        admin,
+        user,
+        user_client,
+        moderator,
+        moderator_client,
     ):
         author_map = {
             admin: admin_client,
@@ -265,7 +283,7 @@ class Test05ReviewAPI:
             moderator: moderator_client,
         }
         reviews, titles = create_reviews(admin_client, author_map)
-        new_data = {"text": "Top score", "score": 10}
+        new_data = {'text': 'Top score', 'score': 10}
         user_review_url = self.REVIEW_DETAIL_URL_TEMPLATE.format(
             title_id=titles[0]["id"], review_id=reviews[1]["id"]
         )
@@ -296,11 +314,15 @@ class Test05ReviewAPI:
             "к его собственному отзыву через `{url_template}` содержится поле "
             "`{field}` - то это поле отзыва будет изменено."
         )
-        assert data.get("text") == new_data["text"], assert_msg_template.format(
-            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field="text"
+        assert (
+            data.get('text') == new_data['text']
+        ), assert_msg_template.format(
+            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='text'
         )
-        assert data.get("score") == new_data["score"], assert_msg_template.format(
-            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field="score"
+        assert (
+            data.get('score') == new_data['score']
+        ), assert_msg_template.format(
+            url_template=self.REVIEW_DETAIL_URL_TEMPLATE, field='score'
         )
 
         moderator_review_url = self.REVIEW_DETAIL_URL_TEMPLATE.format(
@@ -337,7 +359,13 @@ class Test05ReviewAPI:
         )
 
     def test_05_reviews_detail_moderator_and_admin(
-        self, admin_client, admin, user_client, user, moderator_client, moderator
+        self,
+        admin_client,
+        admin,
+        user_client,
+        user,
+        moderator_client,
+        moderator,
     ):
         author_map = {
             admin: admin_client,
@@ -345,10 +373,14 @@ class Test05ReviewAPI:
             moderator: moderator_client,
         }
         reviews, titles = create_reviews(admin_client, author_map)
-        new_data = {"text": "Top score", "score": 10}
+        new_data = {'text': 'Top score', 'score': 10}
 
         for idx, (client, role) in enumerate(
-            ((moderator_client, "модератора"), (admin_client, "администратора")), 1
+            (
+                (moderator_client, 'модератора'),
+                (admin_client, 'администратора'),
+            ),
+            1,
         ):
             response = client.patch(
                 self.REVIEW_DETAIL_URL_TEMPLATE.format(
@@ -382,7 +414,13 @@ class Test05ReviewAPI:
             )
 
     def test_06_reviews_detail_put_not_allowed(
-        self, admin_client, admin, user_client, user, moderator_client, moderator
+        self,
+        admin_client,
+        admin,
+        user_client,
+        user,
+        moderator_client,
+        moderator,
     ):
         author_map = {
             admin: admin_client,
