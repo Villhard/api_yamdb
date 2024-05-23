@@ -21,10 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if validated_data['username'].lower() == 'me':
             raise serializers.ValidationError(
-                {
-                    'username': [
-                        'Нельзя использовать имя пользователя "me"'
-                    ]
-                }
+                {'username': ['Нельзя использовать имя пользователя "me"']}
             )
         return User.objects.create_user(**validated_data)
