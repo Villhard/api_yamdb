@@ -21,3 +21,17 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=50, blank=True, null=True, choices=roles, default='user'
     )
+
+
+class ConfirmationCode(models.Model):
+    """
+    Модель кода подтверждения.
+
+    user: Пользователь
+    code: Код подтверждения
+    created_at: Дата и время создания кода
+    """
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=16)
+    created_at = models.DateTimeField(auto_now_add=True, auto_now=True)
