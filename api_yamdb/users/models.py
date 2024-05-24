@@ -11,6 +11,7 @@ class User(AbstractUser):
     - поле password необязательно
     """
 
+    email = models.EmailField(unique=True)
     roles = (
         ('user', 'Пользователь'),
         ('moderator', 'Модератор'),

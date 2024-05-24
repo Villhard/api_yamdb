@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import User
 
 
@@ -18,9 +19,10 @@ class UserSerializer(serializers.ModelSerializer):
             'bio',
         )
 
-    def create(self, validated_data):
-        if validated_data['username'].lower() == 'me':
-            raise serializers.ValidationError(
-                {'username': ['Нельзя использовать имя пользователя "me"']}
-            )
-        return User.objects.create_user(**validated_data)
+    def validate_username(self, value):
+        """
+        Проверка что username не 'me'.
+        """
+        if value == 'me':
+            raise ValidationError('Username не может быть "me"')
+        return value
