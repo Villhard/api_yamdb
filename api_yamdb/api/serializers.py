@@ -1,7 +1,27 @@
 from rest_framework.serializers import ModelSerializer, CurrentUserDefault
 from rest_framework.relations import SlugRelatedField
 
-from reviews.models import Review, Comment
+from reviews.models import Category, Genre, Review, Comment
+
+
+class CategorySerializer(ModelSerializer):
+    """Сериализатор для категорий."""
+
+    class Meta:
+        model = Category
+        exclude = [
+            'id',
+        ]
+
+
+class GenreSerializer(ModelSerializer):
+    """Сериализатор для жанров."""
+
+    class Meta:
+        model = Genre
+        exclude = [
+            'id',
+        ]
 
 
 class ReviewSerializer(ModelSerializer):
