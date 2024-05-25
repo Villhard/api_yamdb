@@ -1,12 +1,16 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from reviews.models import Category, Genre, Title, Review
-from .serializers import CategorySerializer, GenreSerializer, ReviewSerializer, CommentSerializer
+from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    ReviewSerializer,
+    CommentSerializer,
+)
 from .mixins import ListCreateDestroyViewSet
-from permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
