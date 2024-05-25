@@ -1,10 +1,26 @@
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-from reviews.models import Title, Review
-from serializers import ReviewSerializer, CommentSerializer
+from reviews.models import Category, Genre, Title, Review
+from .serializers import CategorySerializer, GenreSerializer, ReviewSerializer, CommentSerializer
+from .mixins import ListCreateDestroyViewSet
 from permissions import IsOwnerOrReadOnly
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    """Представление для категорий."""
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class GenreViewSet(ListCreateDestroyViewSet):
+    """Представление для жанров"""
+
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
 
 
 class ReviewViewSet(ModelViewSet):
