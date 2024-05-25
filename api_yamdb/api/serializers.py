@@ -1,7 +1,12 @@
 from django.utils import timezone
 from rest_framework import serializers
 
-from rest_framework.serializers import ModelSerializer, CurrentUserDefault
+from rest_framework.serializers import (
+    CurrentUserDefault,
+    FloatField,
+    ModelSerializer,
+    ValidationError,
+)
 from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Genre, Review, Comment, Title
@@ -33,7 +38,7 @@ class TitleSerializer(ModelSerializer):
 
     genre = GenreSerializer(read_only=True)
     category = CategorySerializer(many=True, read_only=True)
-    rating = serializers.FloatField(read_only=True)
+    rating = FloatField(read_only=True)
 
     class Meta:
         model = Title
@@ -41,20 +46,20 @@ class TitleSerializer(ModelSerializer):
 
     def validate_year(self, value):
         if value > timezone.now().year:
-            raise serializers.ValidationError('Не корректный год!')
+            raise ValidationError('Не корректный год!')
         return value
 
     def validate_genre(self, value):
         if not Genre.objects.filter(slug=value).exists():
-            raise serializers.ValidationError('Нет такого жанра!')
+            raise ValidationError('Нет такого жанра!')
         return value
 
     def validate_category(self, value):
         if not Category.objects.filter(slug=value).exists():
-            raise serializers.ValidationError('Нет такой категории!')
+            raise ValidationError('Нет такой категории!')
         return value
 
-      
+
 class ReviewSerializer(ModelSerializer):
     """Сериализатор отзыва."""
 
