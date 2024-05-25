@@ -1,16 +1,18 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-from reviews.models import Category, Genre, Title, Review
+from reviews.models import Category, Genre, Title, Review, Comment
+from .mixins import ListCreateDestroyViewSet
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
+    TitleSerializer,
     ReviewSerializer,
     CommentSerializer,
 )
-from .mixins import ListCreateDestroyViewSet
-from .permissions import IsOwnerOrReadOnly
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -27,6 +29,30 @@ class GenreViewSet(ListCreateDestroyViewSet):
     serializer_class = GenreSerializer
 
 
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = (
+        Title.objects.all()
+        .annotate(rating=Avg('reviews__score'))
+        .order_by('rating')
+    )
+    serializer_class = TitleSerializer
+    permission_classes = [
+        IsAdminOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        category = get_object_or_404(
+            Category, slug=self.request.data.get('category')
+        )
+        genre = Genre.objects.filter(
+            slug__in=self.request.data.getlist('genre')
+        )
+        serializer.save(category=category, genre=genre)
+
+    def perform_update(self, serializer):
+        self.perform_create(serializer)
+
+        
 class ReviewViewSet(ModelViewSet):
     """
     Получение одного/всех отзывов любыми пользователями.

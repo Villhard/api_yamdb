@@ -1,8 +1,10 @@
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 from users.models import User
 from . import constants
+from .validators import year_validator
+
 
 
 class Category(models.Model):
@@ -35,7 +37,14 @@ class Title(models.Model):
     """Модель произведения"""
 
     name = models.CharField('Название', max_length=256)
-    year = models.IntegerField('Год', blank=True, null=True)
+    year = models.IntegerField(
+        'Год',
+        validators=[
+            year_validator,
+        ],
+        blank=True,
+        null=True,
+    )
     description = models.TextField('Описание', blank=True, null=True)
     category = models.ForeignKey(
         Category,
