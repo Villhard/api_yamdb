@@ -22,9 +22,7 @@ def signup(request):
             username=username,
             email=email,
         )
-        code = get_random_string(
-            length=6, allowed_chars='1234567890'
-        )
+        code = get_random_string(length=6, allowed_chars='1234567890')
         ConfirmationCode.objects.update_or_create(
             user=user,
             defaults={'code': code},
