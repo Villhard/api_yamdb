@@ -34,5 +34,5 @@ class ConfirmationCode(models.Model):
     """
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    code = models.CharField(max_length=16)
+    code = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now=True)
