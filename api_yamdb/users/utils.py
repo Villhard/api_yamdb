@@ -1,10 +1,15 @@
-from string import ascii_letters, digits
-from random import choices
+from django.core.mail import EmailMessage
+from api_yamdb.settings import EMAIL_HOST_USER
 
 
-def generate_code(length=16):
+def send_mail(user, code):
     """
-    Генерация кода для подтверждения.
+    Отправка письма с кодом подтверждения.
     """
-    symbols = ascii_letters + digits
-    return ''.join(choices(symbols, k=length))
+    email = EmailMessage(
+        'Код для подтверждения',
+        f'{user.username}, Ваш код для входа\n{code}',
+        EMAIL_HOST_USER,
+        [user.email],
+    )
+    email.send()
