@@ -1,3 +1,4 @@
+from re import fullmatch
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import User
@@ -8,8 +9,14 @@ class UserSerializer(serializers.ModelSerializer):
     Сериализатор пользователя.
     """
 
-    username = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
+    username = serializers.CharField(
+        max_length=150,
+        required=True,
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        required=True
+    )
 
     class Meta:
         model = User
@@ -24,6 +31,16 @@ class UserSerializer(serializers.ModelSerializer):
         """
         username = data.get('username')
         email = data.get('email')
+
+        if username == 'me':
+            raise ValidationError(
+                {'username': 'Нельзя использовать это имя пользователя'}
+            )
+
+        if not fullmatch(r'^[\w.@+-]+\Z', username):
+            raise ValidationError(
+                {'username': 'Не допустимые символы в имени пользователя'}
+            )
 
         user_with_same_username_and_email = User.objects.filter(
             username=username, email=email
