@@ -36,17 +36,17 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
-    def validate_year(value):
+    def validate_year(self, value):
         if value > timezone.now().year:
             raise serializers.ValidationError('Не корректный год!')
         return value
 
-    def validate_genre(value):
+    def validate_genre(self, value):
         if not Genre.objects.filter(slug=value).exists():
             raise serializers.ValidationError('Нет такого жанра!')
         return value
 
-    def validate_category(value):
+    def validate_category(self, value):
         if not Category.objects.filter(slug=value).exists():
             raise serializers.ValidationError('Нет такой категории!')
         return value
