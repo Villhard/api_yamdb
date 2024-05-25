@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (
@@ -29,7 +29,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
     serializer_class = GenreSerializer
 
 
-class TitleViewSet(viewsets.ModelViewSet):
+class TitleViewSet(ModelViewSet):
     queryset = (
         Title.objects.all()
         .annotate(rating=Avg('reviews__score'))
@@ -52,7 +52,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         self.perform_create(serializer)
 
-        
+
 class ReviewViewSet(ModelViewSet):
     """
     Получение одного/всех отзывов любыми пользователями.
