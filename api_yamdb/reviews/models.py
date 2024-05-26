@@ -6,7 +6,6 @@ from . import constants
 from .validators import year_validator
 
 
-
 class Category(models.Model):
     """Модель категории"""
 
