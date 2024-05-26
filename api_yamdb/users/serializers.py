@@ -11,6 +11,23 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Сериализатор пользователя.
     """
+    
+    class Meta:
+        model = User
+        fields = (
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'bio',
+            'role',
+        )
+
+
+class UserSignupSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации пользователя.
+    """
 
     username = serializers.CharField(
         max_length=150,
