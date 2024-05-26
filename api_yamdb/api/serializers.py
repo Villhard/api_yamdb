@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.serializers import (
     CurrentUserDefault,
     IntegerField,
@@ -75,12 +76,17 @@ class ReviewSerializer(ModelSerializer):
         ]
         read_only_fields = ('id', 'title', 'pub_date', 'author')
 
-    def validate_review(self, score):
+    def score_validate(self, score):
         if not 1 <= score <= 10:
-            raise serializers.ValidationError(
-                'Оценка должна быть в диапазоне от 1 до 10.'
-            )
+            raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
         return score
+
+    # def validate(self, data):
+    #     author = data.get('author')
+    #     title = data.get('title')
+    #     if Review.objects.filter(author=author, title=title).exists():
+    #         raise ValidationError('нельзя 2')
+    #     return data
 
 
 class CommentSerializer(ModelSerializer):

@@ -123,11 +123,12 @@ class Review(models.Model):
         return self.text[:50]
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['author', 'title'], name='unique_author_title'
-            )
-        ]  # На одно произведение пользователь может оставить только один отзыв
+        unique_together = ['author', 'title']
+        # constraints = (
+        #     models.UniqueConstraint(
+        #         fields=['author', 'title'], name='unique_author_title'
+        #     ),
+        # )  # На одно произведение пользователь может оставить только один отзыв
         ordering = ['-pub_date']
         verbose_name = 'Отзыв'
         verbose_name_plural = 'Отзывы'

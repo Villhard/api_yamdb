@@ -1,12 +1,20 @@
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import status
+from rest_framework.response import Response
+
 
 from reviews.models import Category, Genre, Title, Review
 from .mixins import ListCreateDestroyViewSet
-from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
+from .permissions import (
+    IsAdminOrReadOnly,
+    IsOwnerModeratorAdminSuperuserOrReadOnly,
+)
 from .serializers import (
     CategorySerializer,
     GenreSerializer,
@@ -63,8 +71,9 @@ class ReviewViewSet(ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsOwnerModeratorAdminSuperuserOrReadOnly,
     )
+    http_method_names = ['get', 'post', 'patch', 'head', 'delete']
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -72,7 +81,22 @@ class ReviewViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        # serializer['title'] = title
+        # serializer['author'] = self.request.user
+        # if Review.objects.filter(
+        #     author=self.request.user, title=title
+        # ).exists():
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # try:
         serializer.save(author=self.request.user, title=title)
+        # except IntegrityError:
+        # except Exception:
+        #     return Response(status=status.HTTP_400_BAD_REQUEST)
+        # if serializer.is_valid():
+        #     serializer.save(author=self.request.user, title=title)
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommentViewSet(ModelViewSet):
@@ -84,8 +108,9 @@ class CommentViewSet(ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsOwnerModeratorAdminSuperuserOrReadOnly,
     )
+    http_method_names = ['get', 'post', 'patch', 'head', 'delete']
 
     def get_queryset(self):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
