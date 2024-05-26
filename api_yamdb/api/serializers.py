@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -10,7 +11,6 @@ from rest_framework.serializers import (
 from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Genre, Review, Comment, Title
-
 
 
 class CategorySerializer(ModelSerializer):
@@ -71,8 +71,17 @@ class ReviewSerializer(ModelSerializer):
 
     class Meta:
         model = Review
-        fields = '__all__'
+        exclude = [
+            'title',
+        ]
         read_only_fields = ('id', 'title', 'pub_date', 'author')
+
+    def validate_review(self, score):
+        if not 1 <= score <= 10:
+            raise serializers.ValidationError(
+                'Оценка должна быть в диапазоне от 1 до 10.'
+            )
+        return score
 
 
 class CommentSerializer(ModelSerializer):
