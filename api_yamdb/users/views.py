@@ -1,11 +1,12 @@
 from django.utils.crypto import get_random_string
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
-from .serializers import UserSerializer
-from .models import ConfirmationCode, User
-from .utils import send_mail
+from users.models import ConfirmationCode, User
+from users.serializers import UserSerializer, ObtainTokenSerializer
+from users.utils import send_mail
 
 
 @api_view(['POST'])
@@ -31,4 +32,18 @@ def signup(request):
         send_mail(user, code)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def token(request):
+    """
+    Получение токена.
+    """
+    serializer = ObtainTokenSerializer(data=request.data)
+    if serializer.is_valid():
+        username = serializer.validated_data.get('username')
+        user = User.objects.get(username=username)
+        token = AccessToken.for_user(user)
+        return Response({'token': str(token)}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

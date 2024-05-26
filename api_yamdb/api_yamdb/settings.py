@@ -1,7 +1,8 @@
 import os
+from datetime import timedelta
 from pathlib import Path
-from dotenv import load_dotenv
 
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -28,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'api.apps.ApiConfig',
@@ -64,6 +66,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
+# JWT
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+}
 
 # Database
 
