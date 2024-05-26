@@ -1,4 +1,5 @@
 from django.core.mail import EmailMessage
+
 from api_yamdb.settings import EMAIL_HOST_USER
 
 
