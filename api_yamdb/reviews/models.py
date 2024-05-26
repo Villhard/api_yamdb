@@ -6,7 +6,6 @@ from . import constants
 from .validators import year_validator
 
 
-
 class Category(models.Model):
     """Модель категории"""
 
@@ -54,7 +53,10 @@ class Title(models.Model):
         related_name='titles',
     )
     genre = models.ManyToManyField(
-        Genre, blank=True, related_name='titles', verbose_name='Жанр'
+        Genre,
+        through='GenreTitle',
+        related_name='titles',
+        verbose_name='Жанр',
     )
 
     class Meta:
@@ -62,6 +64,32 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GenreTitle(models.Model):
+    title = models.ForeignKey(
+        Title,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='titles',
+        verbose_name='Произведение',
+    )
+    genre = models.ForeignKey(
+        Genre,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='genres',
+        verbose_name='Жанр',
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title', 'genre'], name='unique_fields_genretitle'
+            )
+        ]
 
 
 class Review(models.Model):
