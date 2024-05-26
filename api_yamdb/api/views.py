@@ -1,10 +1,11 @@
 from django.db.models import Avg
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from reviews.models import Category, Genre, Title, Review
+from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .serializers import (
@@ -31,6 +32,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 
 class TitleViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'delete', 'patch']
     queryset = (
         Title.objects.all()
         .annotate(rating=Avg('reviews__score'))
@@ -40,6 +42,10 @@ class TitleViewSet(ModelViewSet):
     permission_classes = [
         IsAdminOrReadOnly,
     ]
+    filter_backends = [
+        DjangoFilterBackend,
+    ]
+    filterset_class = TitleFilter
 
     def perform_create(self, serializer):
         category = get_object_or_404(
