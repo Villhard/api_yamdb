@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -27,8 +29,11 @@ class User(AbstractUser):
         """
         Проверка кода подтверждения.
         """
-        return self.confirmationcode.code == code
-
+        return (
+            self.confirmationcode.code == code
+            and timezone.now() - timedelta(minutes=10)
+            < self.confirmationcode.created_at
+        )
 
 class ConfirmationCode(models.Model):
     """
