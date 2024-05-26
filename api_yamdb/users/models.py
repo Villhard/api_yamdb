@@ -23,6 +23,12 @@ class User(AbstractUser):
         max_length=50, blank=True, null=True, choices=roles, default='user'
     )
 
+    def check_confirmation_code(self, code):
+        """
+        Проверка кода подтверждения.
+        """
+        return self.confirmationcode.code == code
+
 
 class ConfirmationCode(models.Model):
     """
