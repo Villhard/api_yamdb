@@ -1,16 +1,14 @@
 from django.utils import timezone
-from rest_framework import serializers
 
 from rest_framework.serializers import (
     CurrentUserDefault,
-    FloatField,
+    IntegerField,
     ModelSerializer,
     ValidationError,
 )
 from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Genre, Review, Comment, Title
-
 
 
 class CategorySerializer(ModelSerializer):
@@ -36,9 +34,9 @@ class GenreSerializer(ModelSerializer):
 class TitleSerializer(ModelSerializer):
     """Сериализатор для произведений."""
 
-    genre = GenreSerializer(read_only=True)
-    category = CategorySerializer(many=True, read_only=True)
-    rating = FloatField(read_only=True)
+    genre = GenreSerializer(many=True, read_only=True)
+    category = CategorySerializer(read_only=True)
+    rating = IntegerField(read_only=True)
 
     class Meta:
         model = Title
