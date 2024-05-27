@@ -44,7 +44,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Проверка на полное совпадение username и email с существующим пользователем.
+        Проверка на полное совпадение username и email
         """
         username = data.get('username')
         email = data.get('email')
