@@ -8,7 +8,11 @@ from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.filters import SearchFilter
 
 from users.models import ConfirmationCode, User
-from users.serializers import UserSerializer, UserSignupSerializer, ObtainTokenSerializer
+from users.serializers import (
+    UserSerializer,
+    UserSignupSerializer,
+    ObtainTokenSerializer,
+)
 from users.utils import send_mail
 from users.permissions import IsAdmin
 
@@ -62,12 +66,18 @@ class UserViewSet(ModelViewSet):
     search_fields = ['username']
     http_method_names = ['get', 'post', 'delete', 'patch']
 
-    @action(detail=False, methods=['get', 'patch'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['get', 'patch'],
+        permission_classes=[IsAuthenticated],
+    )
     def me(self, request):
         if request.method == 'GET':
             serializer = self.get_serializer(request.user)
             return Response(serializer.data)
-        serializer = self.get_serializer(request.user, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            request.user, data=request.data, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['role'] = request.user.role
         serializer.save()

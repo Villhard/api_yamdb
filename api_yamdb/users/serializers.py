@@ -11,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Сериализатор пользователя.
     """
-    
+
     class Meta:
         model = User
         fields = (
@@ -33,10 +33,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
         max_length=150,
         required=True,
     )
-    email = serializers.EmailField(
-        max_length=254,
-        required=True
-    )
+    email = serializers.EmailField(max_length=254, required=True)
 
     class Meta:
         model = User
@@ -95,12 +92,8 @@ class ObtainTokenSerializer(serializers.Serializer):
     Сериализатор для получения токена.
     """
 
-    username = serializers.CharField(
-        required=True
-    )
-    confirmation_code = serializers.CharField(
-        required=True
-    )
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
 
     class Meta:
         fields = (
