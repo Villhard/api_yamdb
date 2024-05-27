@@ -19,10 +19,17 @@ class User(AbstractUser):
         ('moderator', 'Модератор'),
         ('admin', 'Администратор'),
     )
-    password = models.CharField(max_length=128, blank=True, null=True)
-    bio = models.TextField(blank=True, null=True)
+    password = models.CharField(
+        'Пароль', max_length=128, blank=True, null=True
+    )
+    bio = models.TextField('О себе', blank=True, null=True)
     role = models.CharField(
-        max_length=50, blank=True, null=True, choices=roles, default='user'
+        'Статус',
+        max_length=50,
+        blank=True,
+        null=True,
+        choices=roles,
+        default='user',
     )
 
     def check_confirmation_code(self, code):
@@ -34,6 +41,11 @@ class User(AbstractUser):
             and timezone.now() - timedelta(minutes=10)
             < self.confirmationcode.created_at
         )
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
 
 class ConfirmationCode(models.Model):
     """
