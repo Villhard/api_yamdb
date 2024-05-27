@@ -40,14 +40,14 @@ Email: ```EMAIL_LOGIN```
 7. Перейти в рабочую папку проекта:  
 ```cd api_yamdb```  
 
-8. Опция: загрузить тестовые фикстуры:  
-```python manage.py load_csv```
-
-9. Выполнить миграции:  
+8. Выполнить миграции:  
 Для macOS/Linux:  
 ```python3 manage.py migrate```  
 Для Windows:  
 ```python manage.py migrate```
+
+9. Опция: загрузить тестовые фикстуры:  
+```python manage.py load_csv```
 
 10. Запустить проект:  
 Для macOS/Linux:  
@@ -101,6 +101,8 @@ Email: ```EMAIL_LOGIN```
   "slug": "^-$"
 }
 ```
+- Удалить категорию:
+```DELETE /api/v1/categories/{slug}/```
 
 ### Жанры
 
@@ -116,6 +118,8 @@ Email: ```EMAIL_LOGIN```
 }
 ```
 
+- Удалить жанр:
+```DELETE /api/v1/genres/{slug}/)```
 
 ### Произведения
 
@@ -139,6 +143,23 @@ Email: ```EMAIL_LOGIN```
 }
 ```
 
+- Частичное обновление информации о произведении:
+```PATCH /api/v1/titles/{titles_id}/)```
+```
+{
+"name": "string",
+"year": 0,
+"description": "string",
+"genre": [
+"string"
+],
+"category": "string"
+}
+```
+
+- Удаление произведения:
+```DELETE /api/v1/titles/{titles_id}/)```
+
 ### Отзывы
 
 - Получить список всех отзывов к произведения:
@@ -156,6 +177,18 @@ Email: ```EMAIL_LOGIN```
 }
 ```
 
+- Частичное обновление отзыва:
+```PATCH /api/v1/titles/{title_id}/reviews/{review_id}/)```
+```
+{
+"text": "string",
+"score": 1
+}
+```
+
+- Удаление отзыва:
+```DELETE api/v1/titles/{title_id}/reviews/{review_id}/)```
+
 ### Комментарии
 
 - Получить список всех комментариев к отзыву:
@@ -171,3 +204,14 @@ Email: ```EMAIL_LOGIN```
   "text": "string"
 }
 ```
+
+- Частичное обновление комментария:
+```PATCH /api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/)```
+```
+{
+"text": "string"
+}
+```
+
+- Удаление комментария:
+```DELETE /api/v1/titles/{title_id}/reviews/{review_id}/comments/{comment_id}/)```
