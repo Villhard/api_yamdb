@@ -9,6 +9,7 @@ from rest_framework.serializers import (
 from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Genre, Review, Comment, Title
+from reviews.constants import MIN_SCORE, MAX_SCORE
 
 
 class CategorySerializer(ModelSerializer):
@@ -94,7 +95,7 @@ class ReviewSerializer(ModelSerializer):
 
     def score_validate(self, score):
         # TODO: Используйте константы из reviews
-        if not 1 <= score <= 10:
+        if not MIN_SCORE <= score <= MAX_SCORE:
             raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
         return score
 

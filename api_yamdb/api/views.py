@@ -6,14 +6,15 @@ from rest_framework.viewsets import ModelViewSet
 
 
 from reviews.models import Category, Genre, Title, Review
+
 # TODO: Тут тоже самое замечание по относительным и абсолютным импортам. Лучше выбрать что то одно
-from .filters import TitleFilter
-from .mixins import ListCreateDestroyViewSet
-from .permissions import (
+from api.filters import TitleFilter
+from api.mixins import ListCreateDestroyViewSet
+from api.permissions import (
     IsAdminOrReadOnly,
     IsOwnerModeratorAdminSuperuserOrReadOnly,
 )
-from .serializers import (
+from api.serializers import (
     CategorySerializer,
     GenreSerializer,
     TitleSerializer,
