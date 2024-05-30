@@ -4,10 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-
 from reviews.models import Category, Genre, Title, Review
-
-# TODO: Тут тоже самое замечание по относительным и абсолютным импортам. Лучше выбрать что то одно
 from api.filters import TitleFilter
 from api.mixins import ListCreateDestroyViewSet
 from api.permissions import (

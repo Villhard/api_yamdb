@@ -6,10 +6,6 @@ from django.db import models
 #  https://docs.djangoproject.com/en/5.0/ref/settings/#auth-user-model
 #  https://docs.djangoproject.com/en/5.0/topics/auth/customizing/#referencing-the-user-model
 from users.models import User
-
-# TODO: Тут вы используете относителньный импорт, а выше - users.models абсолютный.
-#  Вот, нужно выбрать какой-либо один способ. Для небольших проектов лучше использовать
-#  абсолютные импорты https://stackabuse.com/relative-vs-absolute-imports-in-python/
 from reviews.constants import MIN_SCORE, MAX_SCORE
 from reviews.validators import year_validator
 
