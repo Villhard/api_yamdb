@@ -74,9 +74,7 @@ class ReviewSerializer(ModelSerializer):
 
     class Meta:
         model = Review
-        exclude = [
-            'title',
-        ]
+        fields = ('id', 'author', 'text', 'score', 'pub_date')
         read_only_fields = ('id', 'title', 'pub_date', 'author')
 
     def validate(self, data):
@@ -94,7 +92,6 @@ class ReviewSerializer(ModelSerializer):
         return data
 
     def score_validate(self, score):
-        # TODO: Используйте константы из reviews
         if not MIN_SCORE <= score <= MAX_SCORE:
             raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
         return score
@@ -111,5 +108,5 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'review', 'author', 'text', 'pub_date')
         read_only_fields = ('id', 'review', 'pub_date', 'author')
