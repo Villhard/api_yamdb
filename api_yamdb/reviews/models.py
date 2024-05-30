@@ -134,8 +134,7 @@ class Review(models.Model):
         related_name='reviews',
     )
     text = models.TextField('Текст отзыва')
-    # TODO: Тут лучше использовать PositiveSmallIntegerField. Будет занимать меньше места в БД
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'Рейтинг',
         validators=[
             MinValueValidator(MIN_SCORE),
