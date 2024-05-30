@@ -40,6 +40,10 @@ class TitleSerializer(ModelSerializer):
 
     class Meta:
         model = Title
+        # TODO: Cледуя принципу "явное лучше неявного" на мой взгляд лучше перечислить все поля,
+        #  чем писать all. Например завтра добавят новое поле в модель, которое не должно выдаваться
+        #  обычному юзеру, например заметка о пользователе в системе сервисдеск, или те же платежные
+        #  данные, адрес и потом это утечет куда нибудь по недосмотру
         fields = '__all__'
 
     def validate_year(self, value):
@@ -89,6 +93,7 @@ class ReviewSerializer(ModelSerializer):
         return data
 
     def score_validate(self, score):
+        # TODO: Используйте константы из reviews
         if not 1 <= score <= 10:
             raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
         return score

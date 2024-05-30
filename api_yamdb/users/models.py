@@ -15,6 +15,9 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     roles = (
+        # TODO: Лучше строки названия ролей admin, moderator, user вынести в константу внутри класса.
+        #  Эти константы мы будем использовать для сравнения ролей пользователя
+        #  Так мы сможем обращаться к этим константам через User.USER и тп
         ('user', 'Пользователь'),
         ('moderator', 'Модератор'),
         ('admin', 'Администратор'),
@@ -41,6 +44,8 @@ class User(AbstractUser):
             and timezone.now() - timedelta(minutes=10)
             < self.confirmationcode.created_at
         )
+    # TODO: А еще модель можно расширить кастомными методами для проверки роли пользователя - is_admin, is_moderator.
+    #  Так нам проще будет получать permission пользователя Лучше это сделать с использованием декоратора property
 
     class Meta:
         verbose_name = 'Пользователь'

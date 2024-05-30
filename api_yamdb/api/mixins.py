@@ -3,12 +3,17 @@ from rest_framework import filters, mixins, viewsets
 from .permissions import IsAdminOrReadOnly
 
 
+# TODO: Так как технически это все таки viewset,
+#  то и модуль нужно переименовать из mixins.py
 class ListCreateDestroyViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
+    # TODO: Для каких моделей это миксин можно не писать.
+    #  Ведь потом это может поменяться и надо будет помнить,
+    #  что нужнои коммент изменить
     """
     Миксин для категорий и жанров.
     Разрешенные действия:

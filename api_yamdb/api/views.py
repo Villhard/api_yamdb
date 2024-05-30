@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 
 from reviews.models import Category, Genre, Title, Review
+# TODO: Тут тоже самое замечание по относительным и абсолютным импортам. Лучше выбрать что то одно
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (
@@ -37,6 +38,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 class TitleViewSet(ModelViewSet):
     http_method_names = ['get', 'post', 'delete', 'patch']
+    # TODO: Лучше вынести в метод get_queryset
     queryset = (
         Title.objects.all()
         .annotate(rating=Avg('reviews__score'))

@@ -42,6 +42,8 @@ class UserSignupSerializer(serializers.ModelSerializer):
             'username',
         )
 
+    # TODO: Валидация полей проводится в методах validate_fieldname() , а не в validate()
+    # https://www.django-rest-framework.org/api-guide/serializers/#field-level-validation
     def validate(self, data):
         """
         Проверка на полное совпадение username и email
@@ -96,6 +98,7 @@ class ObtainTokenSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField(required=True)
 
     class Meta:
+        # TODO: Так как здесь используется обычный Serializer - указывать fields не нужно
         fields = (
             'username',
             'confirmation_code',

@@ -1,7 +1,14 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+# TODO: Правильнее в settings.py обозначить какая модель User является
+#  стандартной и везде использовать get_user_model
+#  https://docs.djangoproject.com/en/5.0/ref/settings/#auth-user-model
+#  https://docs.djangoproject.com/en/5.0/topics/auth/customizing/#referencing-the-user-model
 from users.models import User
+# TODO: Тут вы используете относителньный импорт, а выше - users.models абсолютный.
+#  Вот, нужно выбрать какой-либо один способ. Для небольших проектов лучше использовать
+#  абсолютные импорты https://stackabuse.com/relative-vs-absolute-imports-in-python/
 from . import constants
 from .validators import year_validator
 
@@ -40,6 +47,15 @@ class Title(models.Model):
     """Модель произведения"""
 
     name = models.CharField('Название', max_length=256)
+    # TODO: А почему бы нам не добавить тут индексы? Не знаю, всем ли я писал это в прошлых спринтах,
+    #  поэтому повторю. Наверняка мы часто будем фильровать Title по году. Это значит, что каждый раз,
+    #  база данных будет проходиться по всем произведениям по порядку пока не найдёт нужное.
+    #  Для облегчения поиска добавим индекс - https://docs.djangoproject.com/en/2.2/ref/models/options/#indexes.
+    #  Если кратко, то таким образом БД будет хранить наши данные упорядоченно и мы будем искать наши данные в
+    #  log2 быстрее, чем без него :) Это довольно обширная тема, возможно вам будет интересно.
+    #  https://im-cloud.ru/blog/chto-takoe-indeksy-bazy-dannyh-dlja-nachinajushhih/ Но стоит учесть,
+    #  что их производительность не достается бесплатно. Они занимают больше места на диске и также мы уменьшаем
+    #  нашу скорость записи в БД, так как на каждую запись нужно будет перестраивать индекс
     year = models.IntegerField(
         'Год',
         validators=[
@@ -117,6 +133,7 @@ class Review(models.Model):
         related_name='reviews',
     )
     text = models.TextField('Текст отзыва')
+    # TODO: Тут лучше использовать PositiveSmallIntegerField. Будет занимать меньше места в БД
     score = models.IntegerField(
         'Рейтинг',
         validators=[

@@ -34,6 +34,9 @@ def user_create(row):
 
 
 def review_create(row):
+    # TODO: Если переменная не используется, в данном случае created,то её лучше обозначить как _
+    #  https://stackoverflow.com/questions/5893163/what-is-the-purpose-of-the-single-underscore-variable-in-python
+    #  Вот тут в пункте 3 описано подробнее
     title, created = Title.objects.get_or_create(id=row[1])
     Review.objects.get_or_create(
         id=row[0],

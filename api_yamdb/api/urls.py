@@ -10,6 +10,8 @@ from .views import (
 )
 
 
+# TODO: Так как у нас может быть много версий API,
+#  то нужно в переменной обозначить к какой версии относится роутер
 router = routers.DefaultRouter()
 router.register(r'categories', CategoryViewSet)
 router.register(r'genres', GenreViewSet)

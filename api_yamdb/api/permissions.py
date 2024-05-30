@@ -6,6 +6,7 @@ class IsOwnerModeratorAdminSuperuserOrReadOnly(BasePermission):
         return (
             request.method in SAFE_METHODS
             or obj.author == request.user
+        # TODO: Используем property класса User
             or request.user.role == 'moderator'
             or request.user.role == 'admin'
             or request.user.is_superuser

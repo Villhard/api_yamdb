@@ -23,6 +23,7 @@ def signup(request):
     Регистрация пользователя.
     """
     serializer = UserSignupSerializer(data=request.data)
+    # TODO: Сериализаторы валидируем с помощью is_valid(raise_exception=True) чтобы не делать вложенности с ифами
     if serializer.is_valid():
         username = serializer.validated_data.get('username')
         email = serializer.validated_data.get('email')
@@ -49,6 +50,7 @@ def token(request):
     Получение токена.
     """
     serializer = ObtainTokenSerializer(data=request.data)
+    # TODO: Сериализаторы валидируем с помощью is_valid(raise_exception=True) чтобы не делать вложенности с ифами
     if serializer.is_valid():
         username = serializer.validated_data.get('username')
         user = User.objects.get(username=username)
@@ -58,6 +60,7 @@ def token(request):
 
 
 class UserViewSet(ModelViewSet):
+    # TODO: Стандартную сортировку лучше указать в Meta модели
     queryset = User.objects.all().order_by('id')
     lookup_field = 'username'
     serializer_class = UserSerializer
