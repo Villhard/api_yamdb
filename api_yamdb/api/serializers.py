@@ -17,9 +17,7 @@ class CategorySerializer(ModelSerializer):
 
     class Meta:
         model = Category
-        exclude = [
-            'id',
-        ]
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(ModelSerializer):
@@ -27,9 +25,7 @@ class GenreSerializer(ModelSerializer):
 
     class Meta:
         model = Genre
-        exclude = [
-            'id',
-        ]
+        fields = ('name', 'slug')
 
 
 class TitleSerializer(ModelSerializer):
@@ -41,11 +37,15 @@ class TitleSerializer(ModelSerializer):
 
     class Meta:
         model = Title
-        # TODO: Cледуя принципу "явное лучше неявного" на мой взгляд лучше перечислить все поля,
-        #  чем писать all. Например завтра добавят новое поле в модель, которое не должно выдаваться
-        #  обычному юзеру, например заметка о пользователе в системе сервисдеск, или те же платежные
-        #  данные, адрес и потом это утечет куда нибудь по недосмотру
-        fields = '__all__'
+        fields = (
+            'id',
+            'name',
+            'year',
+            'rating',
+            'description',
+            'genre',
+            'category',
+        )
 
     def validate_year(self, value):
         if value > timezone.now().year:
