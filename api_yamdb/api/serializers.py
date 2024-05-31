@@ -9,6 +9,7 @@ from rest_framework.serializers import (
 from rest_framework.relations import SlugRelatedField
 
 from reviews.models import Category, Genre, Review, Comment, Title
+from reviews.constants import MIN_SCORE, MAX_SCORE
 
 
 class CategorySerializer(ModelSerializer):
@@ -73,15 +74,13 @@ class ReviewSerializer(ModelSerializer):
 
     class Meta:
         model = Review
-        exclude = [
-            'title',
-        ]
+        fields = ('id', 'author', 'text', 'score', 'pub_date')
         read_only_fields = ('id', 'title', 'pub_date', 'author')
 
     def validate(self, data):
         request = self.context['request']
         author = request.user
-        title_id = self.context.get('view').kwargs.get('title_id')
+        title_id = self.context['view'].kwargs['title_id']
         title = get_object_or_404(Title, id=title_id)
         if (
             request.method == 'POST'
@@ -93,8 +92,7 @@ class ReviewSerializer(ModelSerializer):
         return data
 
     def score_validate(self, score):
-        # TODO: Используйте константы из reviews
-        if not 1 <= score <= 10:
+        if not MIN_SCORE <= score <= MAX_SCORE:
             raise ValidationError('Оценка должна быть в диапазоне от 1 до 10.')
         return score
 
@@ -110,5 +108,5 @@ class CommentSerializer(ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ('id', 'review', 'author', 'text', 'pub_date')
         read_only_fields = ('id', 'review', 'pub_date', 'author')

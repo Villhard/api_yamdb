@@ -22,10 +22,6 @@ ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'users.User'
 
 
-# TODO: Я разделил бы все типы приложений пустой строкой, чтобы было легче ориентироваться в них.
-#  Типы приложений- стандартные приложения джанги, скаченные приложения, наши приложения.
-#  Так нам будет проще изменять список в дальнейшем, если будем добавлять новые.
-#  Считай, что тут правила такие же как и для импортов по PEP8
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -33,9 +29,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+
     'users.apps.UsersConfig',
     'reviews.apps.ReviewsConfig',
     'api.apps.ApiConfig',

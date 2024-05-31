@@ -1,6 +1,6 @@
 from rest_framework import filters, mixins, viewsets
 
-from .permissions import IsAdminOrReadOnly
+from api.permissions import IsAdminOrReadOnly
 
 
 # TODO: Так как технически это все таки viewset,
