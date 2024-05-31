@@ -1,13 +1,12 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth import get_user_model
 from django.db import models
 
-# TODO: Правильнее в settings.py обозначить какая модель User является
-#  стандартной и везде использовать get_user_model
-#  https://docs.djangoproject.com/en/5.0/ref/settings/#auth-user-model
-#  https://docs.djangoproject.com/en/5.0/topics/auth/customizing/#referencing-the-user-model
-from users.models import User
 from reviews.constants import MIN_SCORE, MAX_SCORE
 from reviews.validators import year_validator
+
+
+User = get_user_model()
 
 
 class Category(models.Model):
