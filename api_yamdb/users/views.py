@@ -23,24 +23,24 @@ def signup(request):
     Регистрация пользователя.
     """
     serializer = UserSignupSerializer(data=request.data)
-    if serializer.is_valid():
-        username = serializer.validated_data.get('username')
-        email = serializer.validated_data.get('email')
 
-        user, _ = User.objects.get_or_create(
-            username=username,
-            email=email,
-        )
-        code = get_random_string(length=6, allowed_chars='1234567890')
-        ConfirmationCode.objects.update_or_create(
-            user=user,
-            defaults={'code': code},
-        )
+    serializer.is_valid(raise_exception=True)
+    username = serializer.validated_data.get('username')
+    email = serializer.validated_data.get('email')
 
-        send_mail(user, code)
+    user, _ = User.objects.get_or_create(
+        username=username, email=email
+    )
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    code = get_random_string(length=6, allowed_chars='1234567890')
+
+    ConfirmationCode.objects.update_or_create(
+        user=user, defaults={'code': code}
+    )
+
+    send_mail(user, code)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -49,16 +49,17 @@ def token(request):
     Получение токена.
     """
     serializer = ObtainTokenSerializer(data=request.data)
-    if serializer.is_valid():
-        username = serializer.validated_data.get('username')
-        user = User.objects.get(username=username)
-        token = AccessToken.for_user(user)
-        return Response({'token': str(token)}, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer.is_valid(raise_exception=True)
+
+    username = serializer.validated_data.get('username')
+    user = User.objects.get(username=username)
+    token = AccessToken.for_user(user)
+    return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
 
 class UserViewSet(ModelViewSet):
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.all()
     lookup_field = 'username'
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdmin]

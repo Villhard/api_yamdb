@@ -14,10 +14,15 @@ class User(AbstractUser):
     """
 
     email = models.EmailField(unique=True)
+
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
     roles = (
-        ('user', 'Пользователь'),
-        ('moderator', 'Модератор'),
-        ('admin', 'Администратор'),
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор'),
     )
     password = models.CharField(
         'Пароль', max_length=128, blank=True, null=True
@@ -42,9 +47,18 @@ class User(AbstractUser):
             < self.confirmationcode.created_at
         )
 
+    @property
+    def is_admin(self):
+        return self.role == User.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == User.MODERATOR
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+        ordering = ['id']
 
 
 class ConfirmationCode(models.Model):

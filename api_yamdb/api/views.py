@@ -4,21 +4,20 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-
 from reviews.models import Category, Genre, Title, Review
-from .filters import TitleFilter
-from .mixins import ListCreateDestroyViewSet
-from .permissions import (
+from api.filters import TitleFilter
+from api.permissions import (
     IsAdminOrReadOnly,
     IsOwnerModeratorAdminSuperuserOrReadOnly,
 )
-from .serializers import (
+from api.serializers import (
     CategorySerializer,
     GenreSerializer,
     TitleSerializer,
     ReviewSerializer,
     CommentSerializer,
 )
+from api.viewsets import ListCreateDestroyViewSet
 
 
 class CategoryViewSet(ListCreateDestroyViewSet):
@@ -36,12 +35,13 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 
 class TitleViewSet(ModelViewSet):
+    """
+    Получение списка произведений, информации о произведении,
+    частичное обновление информации о произведении,
+    удаление произведения.
+    """
+
     http_method_names = ['get', 'post', 'delete', 'patch']
-    queryset = (
-        Title.objects.all()
-        .annotate(rating=Avg('reviews__score'))
-        .order_by('rating')
-    )
     serializer_class = TitleSerializer
     permission_classes = [
         IsAdminOrReadOnly,
@@ -50,6 +50,14 @@ class TitleViewSet(ModelViewSet):
         DjangoFilterBackend,
     ]
     filterset_class = TitleFilter
+
+    def get_queryset(self):
+        queryset = (
+            Title.objects.all()
+            .annotate(rating=Avg('reviews__score'))
+            .order_by('rating')
+        )
+        return queryset
 
     def perform_create(self, serializer):
         category = get_object_or_404(

@@ -1,9 +1,12 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth import get_user_model
 from django.db import models
 
-from users.models import User
-from . import constants
-from .validators import year_validator
+from reviews.constants import MIN_SCORE, MAX_SCORE
+from reviews.validators import year_validator
+
+
+User = get_user_model()
 
 
 class Category(models.Model):
@@ -67,6 +70,14 @@ class Title(models.Model):
         ordering = ['name']
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+        indexes = [
+            models.Index(
+                fields=[
+                    'year',
+                ],
+                name='year_idx',
+            )
+        ]
 
     def __str__(self):
         return self.name
@@ -117,11 +128,11 @@ class Review(models.Model):
         related_name='reviews',
     )
     text = models.TextField('Текст отзыва')
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         'Рейтинг',
         validators=[
-            MinValueValidator(constants.MIN_SCORE),
-            MaxValueValidator(constants.MAX_SCORE),
+            MinValueValidator(MIN_SCORE),
+            MaxValueValidator(MAX_SCORE),
         ],
     )
     pub_date = models.DateTimeField(
