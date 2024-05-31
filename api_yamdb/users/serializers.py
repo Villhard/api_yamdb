@@ -42,24 +42,21 @@ class UserSignupSerializer(serializers.ModelSerializer):
             'username',
         )
 
-    # TODO: Валидация полей проводится в методах validate_fieldname() , а не в validate()
-    # https://www.django-rest-framework.org/api-guide/serializers/#field-level-validation
+    def validate_username(self, value):
+        if value == 'me':
+            raise ValidationError('Нельзя использовать это имя')
+
+        if not fullmatch(r'^[\w.@+-]+\Z', value):
+            raise ValidationError('Недопустимые символы в имени')
+
+        return value
+
     def validate(self, data):
         """
         Проверка на полное совпадение username и email
         """
         username = data.get('username')
         email = data.get('email')
-
-        if username == 'me':
-            raise ValidationError(
-                {'username': 'Нельзя использовать это имя пользователя'}
-            )
-
-        if not fullmatch(r'^[\w.@+-]+\Z', username):
-            raise ValidationError(
-                {'username': 'Не допустимые символы в имени пользователя'}
-            )
 
         user_with_same_username_and_email = User.objects.filter(
             username=username, email=email
@@ -96,13 +93,6 @@ class ObtainTokenSerializer(serializers.Serializer):
 
     username = serializers.CharField(required=True)
     confirmation_code = serializers.CharField(required=True)
-
-    class Meta:
-        # TODO: Так как здесь используется обычный Serializer - указывать fields не нужно
-        fields = (
-            'username',
-            'confirmation_code',
-        )
 
     def validate(self, data):
         """

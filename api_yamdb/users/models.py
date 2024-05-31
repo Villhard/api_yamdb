@@ -14,13 +14,15 @@ class User(AbstractUser):
     """
 
     email = models.EmailField(unique=True)
+
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
     roles = (
-        # TODO: Лучше строки названия ролей admin, moderator, user вынести в константу внутри класса.
-        #  Эти константы мы будем использовать для сравнения ролей пользователя
-        #  Так мы сможем обращаться к этим константам через User.USER и тп
-        ('user', 'Пользователь'),
-        ('moderator', 'Модератор'),
-        ('admin', 'Администратор'),
+        (USER, 'Пользователь'),
+        (MODERATOR, 'Модератор'),
+        (ADMIN, 'Администратор'),
     )
     password = models.CharField(
         'Пароль', max_length=128, blank=True, null=True
@@ -44,12 +46,19 @@ class User(AbstractUser):
             and timezone.now() - timedelta(minutes=10)
             < self.confirmationcode.created_at
         )
-    # TODO: А еще модель можно расширить кастомными методами для проверки роли пользователя - is_admin, is_moderator.
-    #  Так нам проще будет получать permission пользователя Лучше это сделать с использованием декоратора property
+
+    @property
+    def is_admin(self):
+        return self.role == User.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == User.MODERATOR
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+        ordering = ['id']
 
 
 class ConfirmationCode(models.Model):
